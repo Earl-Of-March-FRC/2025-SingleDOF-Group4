@@ -35,9 +35,10 @@ public class RotateToAngleCommand extends Command {
     public void end(boolean interrupted) {
         motorSubsystem.stopMotor();
         if (interrupted) {
-            System.out.println("RotateToAngleCommand interrupted!");
+            System.out.println("RotateToAngleCommand interrupted");
         } else {
-            System.out.println("RotateToAngleCommand finished!");
+            System.out.println("RotateToAngleCommand finished");
         }
     }
+
 }
