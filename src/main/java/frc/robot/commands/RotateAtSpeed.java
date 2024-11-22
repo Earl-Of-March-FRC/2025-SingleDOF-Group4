@@ -22,9 +22,7 @@ public class RotateAtSpeed extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-      System.out.println("Setting motor to " + targetRPM + " RPM");
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -34,11 +32,6 @@ public class RotateAtSpeed extends Command {
 
   public void end(boolean interrupted) {
     motorSubsystem.stopMotor();
-    if (interrupted) {
-        System.out.println("RotateToAngleCommand interrupted");
-    } else {
-        System.out.println("RotateToAngleCommand finished");
-    }
   }
 
   @Override

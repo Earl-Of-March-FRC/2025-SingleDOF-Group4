@@ -11,23 +11,34 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class MotorSubsystem extends SubsystemBase {
     private final WPI_TalonSRX motor = new WPI_TalonSRX(0);
-    private final PIDController pidController = new PIDController(0.005, 0.0, 0.0);
+    private final PIDController pidController = new PIDController(0.0005, 0.0, 0.0);
     private final TalonSRXSimCollection motorSim = motor.getSimCollection();
 
     private static final int ENCODER_TICKS_PER_REV = 1024;
     private static final double ENCODER_TICKS_PER_DEGREE = ENCODER_TICKS_PER_REV / 360.0; //Update with encoder specs
-
+    
+    public void setMotorSpeed(double speed) {
+        // Clamp speed between -1 and 1
+        speed = Math.max(-1.0, Math.min(1.0, speed));
+    
+        if (Math.abs(speed) > 0.1) { // Deadband for small joystick movements
+            motor.set(speed);
+        } else {
+            motor.set(0); // Stop motor if input is within deadband
+        }
+    }
     //Rotate to setpoint/angle methods//
     public MotorSubsystem() {
         motor.setNeutralMode(NeutralMode.Brake);
-        pidController.setTolerance(1.0); // 1 degree tolerance for setpoint
-        motor.setSelectedSensorPosition(0); // Reset encoder at initialization
+        pidController.setTolerance(1.0);
+        motor.setSelectedSensorPosition(0); //Reset encoder at initialization (replace with limit switch)
     }
 
     public void rotateToAngle(double targetAngle) {
         double targetPosition = targetAngle * ENCODER_TICKS_PER_DEGREE;
         double currentPosition = motor.getSelectedSensorPosition();
         double pidOutput = pidController.calculate(currentPosition, targetPosition);
+        pidOutput = Math.max(-1.0, Math.min(1.0, pidOutput));
         motor.set(pidOutput);
     }
 
@@ -54,9 +65,7 @@ public class MotorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println("Current Position: " + motor.getSelectedSensorPosition());
         SmartDashboard.putNumber("Current Position", motor.getSelectedSensorPosition());
-        System.out.println("Current RPM: " + getCurrentRPM());
         SmartDashboard.putNumber("Current RPM", getCurrentRPM());
     }
 
