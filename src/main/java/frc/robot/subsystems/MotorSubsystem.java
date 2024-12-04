@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,13 +21,10 @@ public class MotorSubsystem extends SubsystemBase {
     
     public void setMotorSpeed(double speed) {
         // Clamp speed between -1 and 1
-        speed = Math.max(-1.0, Math.min(1.0, speed));
+        speed = MathUtil.clamp(speed, -1, 1); // Clamps the speed, no need to do min() and max()
+        speed = MathUtil.applyDeadband(speed, 0.1); // Applies deadband, no need to do if/else statements
     
-        if (Math.abs(speed) > 0.1) { // Deadband for small joystick movements
-            motor.set(speed);
-        } else {
-            motor.set(0); // Stop motor if input is within deadband
-        }
+        motor.set(speed);
     }
     //Rotate to setpoint/angle methods//
     public MotorSubsystem() {
